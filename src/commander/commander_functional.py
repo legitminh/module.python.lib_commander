@@ -12,7 +12,17 @@ type Action = Callable[[list[str]], None] #a command takes variables
 type Command = tuple[int, Action] #a command takes variables
 type ReturnCommanderFunctional = Callable[[str], None]
 
-def commander_functional(dict_command: dict[str, Command], ) -> ReturnCommanderFunctional:
+def commander_functional(dict_command: dict[str, Command], default_pack) -> ReturnCommanderFunctional:
+    def list_commands(args: list[str]):
+        print("available commands:")
+        for command in dict_command:
+            print(f"- {command}")
+    
+    dict_command = dict_command | {
+        "list.commands" : (0, list_commands),
+        "?" : (0, list_commands),
+    }
+
     def execute(s:str):
         if s == "":
             return
@@ -42,8 +52,18 @@ def get_completer(dict_command: dict[str, Command]):
     completer = CommandCompleter()
     return completer
 
-def commander_prompt_toolkit_loop(dict_command: dict[str, Command]):
-    commander_func = commander_functional(dict_command)
+import subprocess
+def shell(args: list[str]):
+    if len(args) == 0:
+        return
+    subprocess.run(args)
+default_pack = {
+    "shell" : (-1, shell),
+}
+
+def commander_prompt_toolkit_loop(dict_command: dict[str, Command], default_pack = default_pack):
+    dict_command = dict_command | default_pack
+    commander_func = commander_functional(dict_command, default_pack = default_pack)
     session = PromptSession(completer=get_completer(dict_command))
     while True:
         try:
