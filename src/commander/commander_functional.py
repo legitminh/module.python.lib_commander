@@ -22,7 +22,7 @@ def commander_functional(dict_command: dict[str, Command], ) -> ReturnCommanderF
             warning(f"command {cmd} not found")
             return
         n, f = dict_command[cmd]
-        if len(l) - 1 != n:
+        if n!= -1 and len(l) - 1 != n:
             warning(f"command {cmd} expects {n} arguments, but got {len(l) - 1}")
             return
         f(l[1:])
