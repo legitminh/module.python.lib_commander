@@ -8,6 +8,16 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 import re
 
+MANUAL = \
+"""
+__THIS IS THE MANUAL__
+type ? for list of commands. 
+hit enter to run commands, each command is a line consisting of [command names] followed by arguments (separated by spaces).
+wrap string arguments in \" characters
+__END__
+
+"""
+
 type Action = Callable[[list[str]], None] #a command takes variables
 type Command = tuple[int, Action] #a command takes variables
 
@@ -96,6 +106,9 @@ def shell(args: list[str]):
     subprocess.run(args)
 default_pack = {
     "shell" : (-1, shell),
+    "open.manual": (0, lambda l: 
+        print(MANUAL)
+    )
 }
 
 def commander_prompt_toolkit_loop(dict_command: dict[str, Command], default_pack = default_pack):
