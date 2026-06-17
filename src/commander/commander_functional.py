@@ -37,7 +37,7 @@ def get_completer(dict_command: dict[str, Command]):
                     yield Completion(
                         cmd[len(text):],
                         start_position=0,
-                        display=f"{cmd} (command)",
+                        display=f"{cmd} ({dict_command[cmd][0]} args)",
                     )
     completer = CommandCompleter()
     return completer
