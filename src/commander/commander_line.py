@@ -1,12 +1,13 @@
+"""
+A commander that executes commands line by line using prompt_toolkit. Useful for testing and debugging.
+DEPRECATED
+"""
+
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, NamedTuple, Optional, Union, override
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from abc import ABC, abstractmethod
-"""
-A commander that executes commands line by line using prompt_toolkit. Useful for testing and debugging.
-DEPRECATED
-"""
 
 def input_string() -> str:
     return input().rstrip()
