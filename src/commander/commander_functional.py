@@ -2,7 +2,7 @@
 TODO: command nesting
 """
 from logging import warning
-from typing import Any, NamedTuple
+from dataclasses import dataclass
 from collections.abc import Callable
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
@@ -10,7 +10,12 @@ import re
 
 type Action = Callable[[list[str]], None] #a command takes variables
 type Command = tuple[int, Action] #a command takes variables
-type ReturnCommanderFunctional = Callable[[str], None]
+
+@dataclass
+class ReturnCommanderFunctional():
+    execute: Callable[[str], None]
+    dict_command: dict[str, Command]
+
 
 def commander_functional(dict_command: dict[str, Command], default_pack) -> ReturnCommanderFunctional:
     def list_commands(args: list[str]):
@@ -36,7 +41,7 @@ def commander_functional(dict_command: dict[str, Command], default_pack) -> Retu
             warning(f"command {cmd} expects {n} arguments, but got {len(l) - 1}")
             return
         f(l[1:])
-    return execute
+    return ReturnCommanderFunctional(execute=execute, dict_command=dict_command)
 
 def get_completer(dict_command: dict[str, Command]):
     class CommandCompleter(Completer):
@@ -64,11 +69,11 @@ default_pack = {
 def commander_prompt_toolkit_loop(dict_command: dict[str, Command], default_pack = default_pack):
     dict_command = dict_command | default_pack
     commander_func = commander_functional(dict_command, default_pack = default_pack)
-    session = PromptSession(completer=get_completer(dict_command))
+    session = PromptSession(completer=get_completer(commander_func.dict_command))
     while True:
         try:
             text = session.prompt()
-            commander_func(text)
+            commander_func.execute(text)
         except KeyboardInterrupt:
             continue  # Ctrl-C pressed. Try again.
         except EOFError:
