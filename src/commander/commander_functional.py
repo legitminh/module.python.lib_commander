@@ -16,6 +16,38 @@ class ReturnCommanderFunctional():
     execute: Callable[[str], None]
     dict_command: dict[str, Command]
 
+def get_l(s: str) -> list[str]:
+    l = []
+    cur_token = ""
+    is_skip = False
+    is_big_skip = False
+    for i in s:
+        if is_big_skip:
+            if is_skip:
+                cur_token += i
+                is_skip = False
+            elif i == "\\":
+                is_skip = True
+            elif i == "\"":
+                is_big_skip = False
+            else:
+                cur_token += i
+        elif is_skip:
+            cur_token += i
+            is_skip = False
+        elif i == "\\":
+            is_skip = True
+        elif i == "\"":
+            is_big_skip = True
+        elif i == " ":
+            if cur_token:
+                l.append(cur_token)
+                cur_token = ""
+        else:
+            cur_token += i
+    l.append(cur_token)
+    print(s,l)
+    return l
 
 def commander_functional(dict_command: dict[str, Command], default_pack) -> ReturnCommanderFunctional:
     def list_commands(args: list[str]):
@@ -31,7 +63,7 @@ def commander_functional(dict_command: dict[str, Command], default_pack) -> Retu
     def execute(s:str):
         if s == "":
             return
-        l = re.split(r'\s+', s.strip())
+        l = get_l(s)
         cmd = l[0]
         if cmd not in dict_command:
             warning(f"command {cmd} not found")
