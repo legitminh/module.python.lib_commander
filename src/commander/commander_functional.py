@@ -125,7 +125,6 @@ def commander_prompt_toolkit_loop(dict_command: dict[str, Command], on_interrupt
             continue  # Ctrl-C pressed. Try again.
         except EOFError:
             break  # Ctrl-D pressed. Exit.
-        finally:
-            if on_quit:
-                on_quit()
+    if on_quit:
+        on_quit()
     print("Goodbye!")
