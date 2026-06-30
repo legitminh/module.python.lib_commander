@@ -111,7 +111,7 @@ default_pack = {
     )
 }
 
-def commander_prompt_toolkit_loop(dict_command: dict[str, Command], default_pack = default_pack):
+def commander_prompt_toolkit_loop(dict_command: dict[str, Command], on_interrupt = None, on_quit = None, default_pack = default_pack):
     dict_command = dict_command | default_pack
     commander_func = commander_functional(dict_command, default_pack = default_pack)
     session = PromptSession(completer=get_completer(commander_func.dict_command))
@@ -120,7 +120,11 @@ def commander_prompt_toolkit_loop(dict_command: dict[str, Command], default_pack
             text = session.prompt()
             commander_func.execute(text)
         except KeyboardInterrupt:
+            if on_interrupt:
+                on_interrupt()
             continue  # Ctrl-C pressed. Try again.
         except EOFError:
+            if on_quit:
+                on_quit()
             break  # Ctrl-D pressed. Exit.
     print("Goodbye!")
