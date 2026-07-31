@@ -24,6 +24,7 @@ type Command = tuple[int, Action] #a command takes variables
 @dataclass
 class ReturnCommanderFunctional():
     execute: Callable[[str], None]
+    execute_l: Callable[[list[str]], None]
     dict_command: dict[str, Command]
 
 def get_l(s: str) -> list[str]:
@@ -74,6 +75,9 @@ def commander_functional(dict_command: dict[str, Command]) -> ReturnCommanderFun
         if s == "":
             return
         l = get_l(s)
+        execute_l(l)
+
+    def execute_l(l:list[str]):
         cmd = l[0]
         if cmd not in dict_command:
             warning(f"command {cmd} not found")
@@ -83,7 +87,7 @@ def commander_functional(dict_command: dict[str, Command]) -> ReturnCommanderFun
             warning(f"command {cmd} expects {n} arguments, but got {len(l) - 1}")
             return
         f(l[1:])
-    return ReturnCommanderFunctional(execute=execute, dict_command=dict_command)
+    return ReturnCommanderFunctional(execute=execute, execute_l = execute_l, dict_command=dict_command)
 
 def get_completer(dict_command: dict[str, Command]):
     class CommandCompleter(Completer):
