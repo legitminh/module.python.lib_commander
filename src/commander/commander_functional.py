@@ -59,7 +59,7 @@ def get_l(s: str) -> list[str]:
     print(s,l)
     return l
 
-def commander_functional(dict_command: dict[str, Command], default_pack) -> ReturnCommanderFunctional:
+def commander_functional(dict_command: dict[str, Command]) -> ReturnCommanderFunctional:
     def list_commands(args: list[str]):
         print("available commands:")
         for command in dict_command:
@@ -112,8 +112,10 @@ default_pack = {
 }
 
 def commander_prompt_toolkit_loop(dict_command: dict[str, Command], on_interrupt = None, on_quit = None, default_pack = default_pack):
+    """
+    """
     dict_command = dict_command | default_pack
-    commander_func = commander_functional(dict_command, default_pack = default_pack)
+    commander_func = commander_functional(dict_command)
     session = PromptSession(completer=get_completer(commander_func.dict_command))
     while True:
         try:
